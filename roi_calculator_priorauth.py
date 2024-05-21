@@ -7,11 +7,11 @@ st.title('ROI Calculator')
 
 # Get URL parameters for initial values
 params = st.experimental_get_query_params()
-avg_time_init = int(params.get("avg_time", [20])[0])
-hourly_rate_init = int(params.get("hourly_rate", [15])[0])
+avg_time_init = int(params.get("avg_time", [30])[0])
+hourly_rate_init = int(params.get("hourly_rate", [20])[0])
 prior_auth_vol_init = int(params.get("prior_auth_vol", [1000])[0])
-platform_fee_init = int(params.get("platform_fee", [10000])[0])
-price_per_auth_init = float(params.get("price_per_auth", [2.5])[0])
+platform_fee_init = int(params.get("platform_fee", [20000])[0])
+price_per_auth_init = float(params.get("price_per_auth", [6])[0])
 
 # Main columns for layout
 slider_col, content_col = st.columns([1, 3])
@@ -21,9 +21,9 @@ with slider_col:
     avg_time = st.slider('Average Time Per PA Today', min_value=0, max_value=100, value=avg_time_init)
     hourly_rate = st.slider('Hourly Salary (USD$)', min_value=0, max_value=100, value=hourly_rate_init)
     prior_auth_vol = st.slider('Prior Authorization Volume Per Week', min_value=0, max_value=50000, value=prior_auth_vol_init)
-    platform_fee = st.slider('Platform Fee (USD$)', min_value=0, max_value=50000, value=platform_fee_init)
-    price_per_auth = st.slider('Our Price Per Authorization (USD$)', min_value=0.0, max_value=2.5, value=price_per_auth_init)
-    efficiency = st.slider('Efficiency', min_value=0, max_value=100, value=80)
+    platform_fee = st.slider('Platform Fee (USD$)', min_value=3, max_value=50000, value=platform_fee_init)
+    price_per_auth = st.slider('Our Price Per Authorization (USD$)', min_value=0.0, max_value=20, value=price_per_auth_init)
+    efficiency = st.slider('% Decrease in time/effort', min_value=0, max_value=100, value=80)
     number_of_years = st.slider('Years', min_value=0, max_value=5, value=2)
 
 
@@ -38,12 +38,12 @@ def calculate_roi_over_time(avg_time, hourly_rate, prior_auth_vol, platform_fee,
     for year in years:
         min_per_week = prior_auth_vol * avg_time
         cost_per_week = min_per_week / 60 * hourly_rate
-        decrease_cost_per_week = cost_per_week * (1 - efficiency / 100)
+        decrease_cost_per_week = cost_per_week * (efficiency / 100)
 
         cost_per_year = cost_per_week * 52 * year
         savings = cost_per_week * 52 * year - platform_fee - decrease_cost_per_week * 52 * year
         percent = (savings / (cost_per_week * 52 * year)) * 100
-        time_saved = min_per_week * 52 * year * (1 - efficiency / 100)
+        time_saved = min_per_week * 52 * year * (efficiency / 100)
 
         total_savings.append(savings)
         percent_savings.append(percent)
