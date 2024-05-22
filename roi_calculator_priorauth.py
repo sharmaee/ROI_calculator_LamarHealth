@@ -7,23 +7,23 @@ st.title('ROI Calculator')
 
 # Get URL parameters for initial values
 params = st.experimental_get_query_params()
-avg_time_init = int(params.get("avg_time", [30])[0])
-hourly_rate_init = int(params.get("hourly_rate", [20])[0])
+avg_time_init = int(params.get("avg_time", [45])[0])
+hourly_rate_init = int(params.get("hourly_rate", [21])[0])
 prior_auth_vol_init = int(params.get("prior_auth_vol", [1000])[0])
-platform_fee_init = int(params.get("platform_fee", [20000])[0])
-price_per_auth_init = float(params.get("price_per_auth", [6])[0])
+platform_fee_init = int(params.get("platform_fee", [10000])[0])
+price_per_auth_init = float(params.get("price_per_auth", [4])[0])
 
 # Main columns for layout
 slider_col, content_col = st.columns([1, 3])
 
 with slider_col:
-    st.write("## Parameters")
-    avg_time = st.slider('Average Time Per PA Today', min_value=0, max_value=100, value=avg_time_init)
-    hourly_rate = st.slider('Hourly Salary (USD$)', min_value=0, max_value=100, value=hourly_rate_init)
-    prior_auth_vol = st.slider('Prior Authorization Volume Per Week', min_value=0, max_value=50000, value=prior_auth_vol_init)
-    platform_fee = st.slider('Platform Fee (USD$)', min_value=3, max_value=50000, value=platform_fee_init)
-    price_per_auth = st.slider('Our Price Per Authorization (USD$)', min_value=0.0, max_value=20, value=price_per_auth_init)
-    efficiency = st.slider('% Decrease in time/effort', min_value=0, max_value=100, value=80)
+    #st.write("## Parameters")
+    avg_time = st.slider('Average Time Per PA Today (min)', min_value=0, max_value=100, value=avg_time_init)
+    hourly_rate = st.slider('Hourly Salary (USD$)', min_value=0, max_value=60, value=hourly_rate_init)
+    prior_auth_vol = st.slider('Prior Authorization Volume Per Week', min_value=0, max_value=10000, value=prior_auth_vol_init)
+    platform_fee = st.slider('Platform Fee (USD$)', min_value=0, max_value=50000, value=platform_fee_init)
+    price_per_auth = st.slider('Our Price Per Authorization (USD$)', min_value=3.0, max_value=30.0, value=price_per_auth_init)
+    efficiency = st.slider('Reduction in time spent (Efficiency)', min_value=0, max_value=100, value=50)
     number_of_years = st.slider('Years', min_value=0, max_value=5, value=2)
 
 
@@ -34,31 +34,40 @@ def calculate_roi_over_time(avg_time, hourly_rate, prior_auth_vol, platform_fee,
     percent_savings = []
     total_time_saved = []
     cost_per_year_total = []
+    price_per_year_total = []
 
     for year in years:
         min_per_week = prior_auth_vol * avg_time
         cost_per_week = min_per_week / 60 * hourly_rate
-        decrease_cost_per_week = cost_per_week * (efficiency / 100)
+        #price_per_week = prior_auth_vol*price_per_auth
+        #decrease_cost_per_week = cost_per_week * (1-efficiency / 100)
 
         cost_per_year = cost_per_week * 52 * year
-        savings = cost_per_week * 52 * year - platform_fee - decrease_cost_per_week * 52 * year
+        #savings = cost_per_week * 52 * year - decrease_cost_per_week * 52 * year - price_per_week * 52 * year - platform_fee * year
+       
+        time_saved = min_per_week * 52 * year * (1-efficiency / 100)
+        
+        price_per_year = prior_auth_vol*price_per_auth * 52 * year + platform_fee * year
+        savings = time_saved/60*hourly_rate - price_per_year
         percent = (savings / (cost_per_week * 52 * year)) * 100
-        time_saved = min_per_week * 52 * year * (efficiency / 100)
 
         total_savings.append(savings)
         percent_savings.append(percent)
         total_time_saved.append(time_saved)
         cost_per_year_total.append(cost_per_year)
+        price_per_year_total.append(price_per_year)
 
-    return years, total_savings, percent_savings, total_time_saved, cost_per_year_total
+    return years, total_savings, percent_savings, total_time_saved, cost_per_year_total, price_per_year_total
 
-years, total_savings, percent_savings, total_time_saved, cost_per_year_total = calculate_roi_over_time(avg_time, hourly_rate, prior_auth_vol, platform_fee, price_per_auth, efficiency, number_of_years)
+years, total_savings, percent_savings, total_time_saved, cost_per_year_total, price_per_year_total = calculate_roi_over_time(avg_time, hourly_rate, prior_auth_vol, platform_fee, price_per_auth, efficiency, number_of_years)
 
 data = {
-    'Total Savings (USD$)': int(total_savings[-1]),
-    'Percent Savings': int(percent_savings[-1]),
     'Total Time Saved (minutes)': int(total_time_saved[-1]),
-    'Total Cost Without Lamar Health (USD$)': int(cost_per_year_total[-1])
+    'Cost Without Lamar Health (USD$)': int(cost_per_year_total[-1]),
+    'Cost With Lamar Health (USD$)': int(int(cost_per_year_total[-1]) - int(total_savings[-1])),
+    'Total Savings (USD$)': int(total_savings[-1]),
+    'Lamar Health Price (USD$)': int(price_per_year_total[-1]),
+    'Percent Savings': int(percent_savings[-1])
 }
 
 # Convert the dictionary to a Pandas DataFrame
