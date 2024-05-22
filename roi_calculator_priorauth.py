@@ -45,7 +45,7 @@ def calculate_roi_over_time(avg_time, hourly_rate, prior_auth_vol, platform_fee,
         cost_per_year = cost_per_week * 52 * year
         #savings = cost_per_week * 52 * year - decrease_cost_per_week * 52 * year - price_per_week * 52 * year - platform_fee * year
        
-        time_saved = min_per_week * 52 * year * (1-efficiency / 100)
+        time_saved = min_per_week * 52 * year * (efficiency / 100)
         
         price_per_year = prior_auth_vol*price_per_auth * 52 * year + platform_fee * year
         savings = time_saved/60*hourly_rate - price_per_year
