@@ -24,7 +24,7 @@ with slider_col:
     platform_fee = st.slider('Platform Fee (USD$)', min_value=0, max_value=50000, value=platform_fee_init)
     price_per_auth = st.slider('Our Price Per Authorization (USD$)', min_value=3.0, max_value=30.0, value=price_per_auth_init)
     efficiency = st.slider('Reduction in time spent (Efficiency)', min_value=0, max_value=100, value=50)
-    number_of_years = st.slider('Years', min_value=0, max_value=5, value=2)
+    number_of_years = st.slider('Years', min_value=0, max_value=5, value=3)
 
 
 
