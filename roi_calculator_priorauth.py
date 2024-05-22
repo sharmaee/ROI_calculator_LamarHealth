@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-st.title('ROI Calculator')
+st.title('Lamar Health ROI Calculator')
 
 # Get URL parameters for initial values
 params = st.experimental_get_query_params()
