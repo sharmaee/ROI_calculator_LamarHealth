@@ -20,10 +20,10 @@ with slider_col:
     #st.write("## Parameters")
     avg_time = st.slider('Average Time Per PA Today (min)', min_value=0, max_value=100, value=avg_time_init)
     hourly_rate = st.slider('Hourly Salary (USD$)', min_value=0, max_value=60, value=hourly_rate_init)
-    prior_auth_vol = st.slider('Prior Authorization Volume Per Week', min_value=0, max_value=10000, value=prior_auth_vol_init)
+    prior_auth_vol = st.slider('Prior Authorization Volume Per Week', min_value=0, max_value=1000, value=prior_auth_vol_init)
     platform_fee = st.slider('Platform Fee (USD$)', min_value=0, max_value=50000, value=platform_fee_init)
     price_per_auth = st.slider('Our Price Per Authorization (USD$)', min_value=2.0, max_value=10.0, value=price_per_auth_init)
-    efficiency = st.slider('Reduction in time spent (Efficiency)', min_value=0, max_value=100, value=60)
+    efficiency = st.slider('Reduction in time spent (Efficiency)', min_value=0, max_value=100, value=90)
     number_of_years = st.slider('Years', min_value=0, max_value=5, value=3)
 
 
