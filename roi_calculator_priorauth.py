@@ -7,11 +7,11 @@ st.title('Lamar Health ROI Calculator')
 
 # Get URL parameters for initial values
 params = st.experimental_get_query_params()
-avg_time_init = int(params.get("avg_time", [45])[0])
+avg_time_init = int(params.get("avg_time", [30])[0])
 hourly_rate_init = int(params.get("hourly_rate", [21])[0])
-prior_auth_vol_init = int(params.get("prior_auth_vol", [1000])[0])
-platform_fee_init = int(params.get("platform_fee", [10000])[0])
-price_per_auth_init = float(params.get("price_per_auth", [2])[0])
+prior_auth_vol_init = int(params.get("prior_auth_vol", [21])[0])
+platform_fee_init = int(params.get("platform_fee", [1000])[0])
+price_per_auth_init = float(params.get("price_per_auth", [3])[0])
 
 # Main columns for layout
 slider_col, content_col = st.columns([1, 3])
