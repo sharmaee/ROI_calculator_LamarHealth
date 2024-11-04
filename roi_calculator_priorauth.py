@@ -9,7 +9,7 @@ st.title('Lamar Health ROI Calculator')
 params = st.experimental_get_query_params()
 avg_time_init = int(params.get("avg_time", [30])[0])
 hourly_rate_init = int(params.get("hourly_rate", [15])[0])
-prior_auth_vol_init = int(params.get("patient_vol", [1000])[0])
+prior_auth_vol_init = int(params.get("patient_vol", [37])[0])
 platform_fee_init = int(params.get("platform_fee", [10000])[0])
 price_per_auth_init = float(params.get("price_per_patient", [4])[0])
 
