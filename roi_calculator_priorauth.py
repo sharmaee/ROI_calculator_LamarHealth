@@ -6,7 +6,7 @@ import pandas as pd
 st.title('Lamar Health ROI Calculator')
 
 # Get URL parameters for initial values
-params = st.query_params()
+params = st.experimental_get_query_params()
 avg_time_init = int(params.get("avg_time", [60])[0])
 hourly_rate_init = int(params.get("hourly_rate", [22])[0])
 prior_auth_vol_init = int(params.get("patient_vol", [17])[0])
