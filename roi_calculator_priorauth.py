@@ -80,3 +80,29 @@ ax.legend()
 st.pyplot(fig)
 
 st.write("Lamar Health offers automation solutions across three modules: Fax Processing, Benefit Check, and Prior Authorization. Customize the inputs on the left to see how much you can save.")
+
+# Revenue Recapture
+st.header("Revenue Recapture")
+denial_rates = [x / 100 for x in range(0, 21)]  # 0% to 20%
+patients_per_year = patients_per_month * 12
+revenue_per_patient = 80000  # Assumed chronic patient annual revenue
+revenue_recaptured = [patients_per_year * revenue_per_patient * rate for rate in denial_rates]
+
+revenue_data = pd.DataFrame({
+    'Denial Rate Improvement (%)': [r * 100 for r in denial_rates],
+    'Revenue Recaptured ($)': revenue_recaptured
+})
+
+# Plot revenue recapture
+fig2, ax2 = plt.subplots()
+ax2.plot(revenue_data['Denial Rate Improvement (%)'], revenue_data['Revenue Recaptured ($)'])
+ax2.set_xlabel('Denial Rate Improvement (%)')
+ax2.set_ylabel('Revenue Recaptured ($)')
+ax2.set_title('Revenue Recapture vs. Denial Rate Improvement')
+st.pyplot(fig2)
+
+# Explanation of revenue recapture calculation
+st.caption("**Calculation Logic:**
+Revenue Recaptured = Number of Patients per Year × $80,000 (estimated chronic care revenue per patient) × Denial Rate Improvement (%)
+
+This assumes each patient contributes $80,000 annually and that improvement in denial rates results in direct revenue recovery.")
