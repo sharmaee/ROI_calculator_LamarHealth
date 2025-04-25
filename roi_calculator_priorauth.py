@@ -36,11 +36,13 @@ cost_after_total = cost_after_fax + cost_after_benefit + cost_after_auth
 # Savings
 savings = cost_before_total - cost_after_total
 time_saved_hours = (cost_before_total - cost_after_total) / hourly_salary
+roi_percent = (savings / cost_after_total) * 100 if cost_after_total != 0 else 0
 
 # Summary
 st.title("Lamar Health ROI Summary")
 st.metric("Time Saved (Hours)", f"{time_saved_hours:,.2f}")
 st.metric("Cost Savings ($)", f"${savings:,.2f}")
+st.metric("ROI (%)", f"{roi_percent:.2f}%")
 
 # Time graph data
 months_range = list(range(1, months + 1))
