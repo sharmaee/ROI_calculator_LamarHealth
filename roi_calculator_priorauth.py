@@ -35,8 +35,8 @@ cost_after_total = cost_after_fax + cost_after_benefit + cost_after_auth
 
 # Savings
 savings = cost_before_total - cost_after_total
-time_saved_hours = (cost_before_total - cost_after_total) / hourly_salary
-roi_percent = (savings / cost_after_total) * 100 if cost_after_total != 0 else 0
+time_saved_hours = savings / hourly_salary
+roi_percent = (savings / cost_before_total) * 100 if cost_before_total != 0 else 0
 
 # Summary
 st.title("Lamar Health ROI Summary")
