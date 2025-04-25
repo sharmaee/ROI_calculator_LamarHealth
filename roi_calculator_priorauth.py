@@ -40,9 +40,10 @@ roi_percent = (savings / cost_before_total) * 100 if cost_before_total != 0 else
 
 # Summary
 st.title("Lamar Health ROI Summary")
-st.metric("Time Saved (Hours)", f"{time_saved_hours:,.2f}")
-st.metric("Cost Savings ($)", f"${savings:,.2f}")
-st.metric("ROI (%)", f"{roi_percent:.2f}%")
+col1, col2, col3 = st.columns(3)
+col1.metric("Time Saved (Hours)", f"{time_saved_hours:,.2f}")
+col2.metric("Cost Savings ($)", f"${savings:,.2f}")
+col3.metric("ROI (%)", f"{roi_percent:.2f}%")
 
 # Time graph data
 months_range = list(range(1, months + 1))
