@@ -15,7 +15,7 @@ fax_price = st.sidebar.number_input("Lamar Fax Processing Price ($)", value=2)
 
 enable_benefit = st.sidebar.checkbox("Include Benefit Check", value=True)
 st.sidebar.caption("**Benefit Check Formula:**\nBefore: 30 min × patients/month × hourly wage\nAfter: $benefit check price + 1 min × patients/month × hourly wage")
-benefit_price = st.sidebar.number_input("Lamar Benefit Check Price ($)", value=6)
+benefit_price = st.sidebar.number_input("Lamar Benefit Check Price ($)", value=5)
 
 enable_auth = st.sidebar.checkbox("Include Prior Authorization", value=True)
 st.sidebar.caption("**Prior Authorization Formula:**\nBefore: 30 min × patients/month × hourly wage\nAfter: $prior auth price + 1 min × patients/month × hourly wage")
@@ -28,7 +28,7 @@ minutes_to_hours = 1 / 60
 # Time per task (in minutes)
 fax_time = 15
 benefit_time = 30
-auth_time = 30
+auth_time = 40
 post_lamar_time = 1  # 1 minute of staff time per patient per module
 
 # Cost before Lamar
@@ -96,7 +96,7 @@ st.plotly_chart(fig)
 st.write("Lamar Health offers automation solutions across three modules: Fax Processing, Benefit Check, and Prior Authorization. Customize the inputs on the left to see how much you can save.")
 
 # Revenue Recapture
-st.header("Revenue Recapture")
+st.header("Revenue Recapture from Policy Review")
 denial_rates = [x / 100 for x in range(1, 21)]  # 1% to 20%  # 0% to 20%
 patients_per_year = patients_per_month * 12
 revenue_per_patient = 80000  # Assumed chronic patient annual revenue
