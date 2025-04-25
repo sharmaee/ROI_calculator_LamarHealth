@@ -104,7 +104,7 @@ st.pyplot(fig2)
 # Explanation of revenue recapture calculation
 st.caption("""
 **Calculation Logic:**
-Revenue Recaptured = Number of Patients per Year × $80,000 (estimated chronic care revenue per patient) × Denial Rate Improvement (%)
+Revenue Recaptured = Number of Patients per Year x $80,000 (estimated chronic care revenue per patient) x Denial Rate Improvement (%)
 
 This assumes each patient contributes $80,000 annually and that improvement in denial rates results in direct revenue recovery.
 """) × Denial Rate Improvement (%)
