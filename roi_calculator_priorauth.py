@@ -107,6 +107,4 @@ st.caption("""
 Revenue Recaptured = Number of Patients per Year x $80,000 (estimated chronic care revenue per patient) x Denial Rate Improvement (%)
 
 This assumes each patient contributes $80,000 annually and that improvement in denial rates results in direct revenue recovery.
-""") × Denial Rate Improvement (%)
-
-This assumes each patient contributes $80,000 annually and that improvement in denial rates results in direct revenue recovery.")
+""")
