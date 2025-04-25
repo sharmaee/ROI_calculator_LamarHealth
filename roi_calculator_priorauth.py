@@ -96,7 +96,7 @@ st.plotly_chart(fig)
 st.write("Lamar Health offers automation solutions across three modules: Fax Processing, Benefit Check, and Prior Authorization. Customize the inputs on the left to see how much you can save.")
 
 # Revenue Recapture
-st.header("Revenue Recapture")
+st.header("Revenue Recapture from Policy Review")
 denial_rates = [x / 100 for x in range(0, 21)]  # 0% to 20%
 patients_per_year = patients_per_month * 12
 revenue_per_patient = 80000  # Assumed chronic patient annual revenue
