@@ -86,20 +86,33 @@ st.header("Revenue Recapture")
 denial_rates = [x / 100 for x in range(0, 21)]  # 0% to 20%
 patients_per_year = patients_per_month * 12
 revenue_per_patient = 80000  # Assumed chronic patient annual revenue
-revenue_recaptured = [patients_per_year * revenue_per_patient * rate for rate in denial_rates]
+revenue_recaptured = [(patients_per_year * revenue_per_patient * rate) / 100000 for rate in denial_rates]
 
 revenue_data = pd.DataFrame({
     'Denial Rate Improvement (%)': [r * 100 for r in denial_rates],
     'Revenue Recaptured ($)': revenue_recaptured
 })
 
-# Plot revenue recapture
-fig2, ax2 = plt.subplots()
-ax2.plot(revenue_data['Denial Rate Improvement (%)'], revenue_data['Revenue Recaptured ($)'])
-ax2.set_xlabel('Denial Rate Improvement (%)')
-ax2.set_ylabel('Revenue Recaptured ($)')
-ax2.set_title('Revenue Recapture vs. Denial Rate Improvement')
-st.pyplot(fig2)
+# Plot revenue recapture using Plotly for hover tooltips
+import plotly.express as px
+
+revenue_data_display = pd.DataFrame({
+    'Denial Rate Improvement (%)': [r * 100 for r in denial_rates],
+    'Revenue Recaptured ($100,000s)': revenue_recaptured
+})
+
+fig2 = px.line(
+    revenue_data_display,
+    x='Denial Rate Improvement (%)',
+    y='Revenue Recaptured ($100,000s)',
+    title='Revenue Recapture vs. Denial Rate Improvement',
+    markers=True
+)
+fig2.update_layout(
+    xaxis_title='Denial Rate Improvement (%)',
+    yaxis_title='Revenue Recaptured ($100,000s)'
+)
+st.plotly_chart(fig2)
 
 # Explanation of revenue recapture calculation
 st.caption("""
