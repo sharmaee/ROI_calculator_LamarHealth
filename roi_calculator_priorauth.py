@@ -8,17 +8,18 @@ patients_per_month = st.sidebar.number_input("Number of Patients per Month", val
 hourly_salary = st.sidebar.number_input("Hourly Salary ($)", value=22)
 years = st.sidebar.number_input("Time Horizon (Years)", value=3)
 
-# Module toggles
+# Module toggles and formulas
 enable_fax = st.sidebar.checkbox("Include Fax Processing", value=True)
-enable_benefit = st.sidebar.checkbox("Include Benefit Check", value=True)
-enable_auth = st.sidebar.checkbox("Include Prior Authorization", value=True)
-
-fax_price = st.sidebar.number_input("Lamar Fax Processing Price ($)", value=2)
 st.sidebar.caption("**Fax Processing Formula:** 15 min × patients/month × hourly wage (before) or fax price (after)")
-benefit_price = st.sidebar.number_input("Lamar Benefit Check Price ($)", value=6)
+fax_price = st.sidebar.number_input("Lamar Fax Processing Price ($)", value=2)
+
+enable_benefit = st.sidebar.checkbox("Include Benefit Check", value=True)
 st.sidebar.caption("**Benefit Check Formula:** 30 min × patients/month × hourly wage (before) or benefit check price (after)")
-auth_price = st.sidebar.number_input("Lamar Prior Authorization Price ($)", value=6)
+benefit_price = st.sidebar.number_input("Lamar Benefit Check Price ($)", value=6)
+
+enable_auth = st.sidebar.checkbox("Include Prior Authorization", value=True)
 st.sidebar.caption("**Prior Authorization Formula:** 30 min × patients/month × hourly wage (before) or prior auth price (after)")
+auth_price = st.sidebar.number_input("Lamar Prior Authorization Price ($)", value=6)
 
 # Constants
 months = years * 12
