@@ -15,7 +15,7 @@ fax_price = st.sidebar.number_input("Lamar Fax Processing Price ($)", value=2)
 
 enable_benefit = st.sidebar.checkbox("Include Benefit Check", value=True)
 st.sidebar.caption("**Benefit Check Formula:**\nBefore: 30 min × patients/month × hourly wage\nAfter: $benefit check price + 1 min × patients/month × hourly wage")
-benefit_price = st.sidebar.number_input("Lamar Benefit Check Price ($)", value=6)
+benefit_price = st.sidebar.number_input("Lamar Benefit Check Price ($)", value=5)
 
 enable_auth = st.sidebar.checkbox("Include Prior Authorization", value=True)
 st.sidebar.caption("**Prior Authorization Formula:**\nBefore: 30 min × patients/month × hourly wage\nAfter: $prior auth price + 1 min × patients/month × hourly wage")
