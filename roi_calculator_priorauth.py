@@ -8,9 +8,17 @@ patients_per_month = st.sidebar.number_input("Number of Patients per Month", val
 hourly_salary = st.sidebar.number_input("Hourly Salary ($)", value=22)
 years = st.sidebar.number_input("Time Horizon (Years)", value=3)
 
+# Module toggles
+enable_fax = st.sidebar.checkbox("Include Fax Processing", value=True)
+enable_benefit = st.sidebar.checkbox("Include Benefit Check", value=True)
+enable_auth = st.sidebar.checkbox("Include Prior Authorization", value=True)
+
 fax_price = st.sidebar.number_input("Lamar Fax Processing Price ($)", value=2)
+st.sidebar.caption("**Fax Processing Formula:** 15 min × patients/month × hourly wage (before) or fax price (after)")
 benefit_price = st.sidebar.number_input("Lamar Benefit Check Price ($)", value=6)
+st.sidebar.caption("**Benefit Check Formula:** 30 min × patients/month × hourly wage (before) or benefit check price (after)")
 auth_price = st.sidebar.number_input("Lamar Prior Authorization Price ($)", value=6)
+st.sidebar.caption("**Prior Authorization Formula:** 30 min × patients/month × hourly wage (before) or prior auth price (after)")
 
 # Constants
 months = years * 12
@@ -22,20 +30,20 @@ benefit_time = 30
 auth_time = 30
 
 # Cost before Lamar
-cost_before_fax = fax_time * minutes_to_hours * patients_per_month * hourly_salary * months
-cost_before_benefit = benefit_time * minutes_to_hours * patients_per_month * hourly_salary * months
-cost_before_auth = auth_time * minutes_to_hours * patients_per_month * hourly_salary * months
+cost_before_fax = fax_time * minutes_to_hours * patients_per_month * hourly_salary * months if enable_fax else 0
+cost_before_benefit = benefit_time * minutes_to_hours * patients_per_month * hourly_salary * months if enable_benefit else 0
+cost_before_auth = auth_time * minutes_to_hours * patients_per_month * hourly_salary * months if enable_auth else 0
 cost_before_total = cost_before_fax + cost_before_benefit + cost_before_auth
 
 # Cost after Lamar
-cost_after_fax = fax_time * minutes_to_hours * patients_per_month * fax_price * months
-cost_after_benefit = benefit_time * minutes_to_hours * patients_per_month * benefit_price * months
-cost_after_auth = auth_time * minutes_to_hours * patients_per_month * auth_price * months
+cost_after_fax = fax_time * minutes_to_hours * patients_per_month * fax_price * months if enable_fax else 0
+cost_after_benefit = benefit_time * minutes_to_hours * patients_per_month * benefit_price * months if enable_benefit else 0
+cost_after_auth = auth_time * minutes_to_hours * patients_per_month * auth_price * months if enable_auth else 0
 cost_after_total = cost_after_fax + cost_after_benefit + cost_after_auth
 
 # Savings
 savings = cost_before_total - cost_after_total
-time_saved_hours = savings / hourly_salary
+time_saved_hours = savings / hourly_salary if hourly_salary != 0 else 0
 roi_percent = (savings / cost_before_total) * 100 if cost_before_total != 0 else 0
 
 # Summary
@@ -47,8 +55,8 @@ col3.metric("ROI (%)", f"{roi_percent:.2f}%")
 
 # Time graph data
 months_range = list(range(1, months + 1))
-costs_before = [((fax_time + benefit_time + auth_time) * minutes_to_hours * patients_per_month * hourly_salary) * m for m in months_range]
-costs_after = [((fax_time * fax_price + benefit_time * benefit_price + auth_time * auth_price) * minutes_to_hours * patients_per_month) * m for m in months_range]
+costs_before = [((fax_time * enable_fax + benefit_time * enable_benefit + auth_time * enable_auth) * minutes_to_hours * patients_per_month * hourly_salary) * m for m in months_range]
+costs_after = [((fax_time * fax_price * enable_fax + benefit_time * benefit_price * enable_benefit + auth_time * auth_price * enable_auth) * minutes_to_hours * patients_per_month) * m for m in months_range]
 
 # Create DataFrame for plotting
 data = pd.DataFrame({
