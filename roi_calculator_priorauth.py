@@ -69,15 +69,29 @@ data = pd.DataFrame({
     'Cost After Lamar': costs_after
 })
 
-# Plot the data
-fig, ax = plt.subplots()
-ax.plot(data['Month'], data['Cost Before Lamar'], label='Cost Before Lamar')
-ax.plot(data['Month'], data['Cost After Lamar'], label='Cost After Lamar')
-ax.set_xlabel('Month')
-ax.set_ylabel('Cost ($)')
-ax.set_title('Cost Over Time')
-ax.legend()
-st.pyplot(fig)
+# Plot the data using Plotly for better styling and hover tooltips
+import plotly.express as px
+
+data_plot = pd.DataFrame({
+    'Month': months_range,
+    'Cost Before Lamar': costs_before,
+    'Cost After Lamar': costs_after
+})
+
+fig = px.line(
+    data_plot,
+    x='Month',
+    y=['Cost Before Lamar', 'Cost After Lamar'],
+    title='Cost Over Time',
+    labels={'value': 'Cost ($)', 'Month': 'Month', 'variable': 'Scenario'},
+    markers=True
+)
+fig.update_layout(
+    xaxis_title='Month',
+    yaxis_title='Cost ($)',
+    legend_title='Scenario'
+)
+st.plotly_chart(fig)
 
 st.write("Lamar Health offers automation solutions across three modules: Fax Processing, Benefit Check, and Prior Authorization. Customize the inputs on the left to see how much you can save.")
 
