@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+import plotly.express as px
 
 # Sidebar inputs
 st.sidebar.title("Lamar Health ROI Calculator")
@@ -21,6 +22,10 @@ enable_auth = st.sidebar.checkbox("Include Prior Authorization", value=True)
 st.sidebar.caption("**Prior Authorization Formula:**\nBefore: 30 min × patients/month × hourly wage\nAfter: $prior auth price + 1 min × patients/month × hourly wage")
 auth_price = st.sidebar.number_input("Lamar Prior Authorization Price ($)", value=6)
 
+# New Order Entry Automation
+enable_order_entry = st.sidebar.checkbox("Include Order Entry Automation", value=True)
+st.sidebar.caption("**Order Entry Formula:**\nBefore: 4 min × patients/month × hourly wage\nAfter: 0.5 min × patients/month × hourly wage")
+
 # Constants
 months = years * 12
 minutes_to_hours = 1 / 60
@@ -31,17 +36,25 @@ benefit_time = 30
 auth_time = 40
 post_lamar_time = 1  # 1 minute of staff time per patient per module
 
+# Order entry times
+order_entry_time_before = 4
+order_entry_time_after = 0.5
+
 # Cost before Lamar
 cost_before_fax = fax_time * minutes_to_hours * patients_per_month * hourly_salary * months if enable_fax else 0
 cost_before_benefit = benefit_time * minutes_to_hours * patients_per_month * hourly_salary * months if enable_benefit else 0
 cost_before_auth = auth_time * minutes_to_hours * patients_per_month * hourly_salary * months if enable_auth else 0
-cost_before_total = cost_before_fax + cost_before_benefit + cost_before_auth
+cost_before_order_entry = order_entry_time_before * minutes_to_hours * patients_per_month * hourly_salary * months if enable_order_entry else 0
 
-# Cost after Lamar (module price + 1 min of staff time)
+cost_before_total = cost_before_fax + cost_before_benefit + cost_before_auth + cost_before_order_entry
+
+# Cost after Lamar
 cost_after_fax = (fax_price + post_lamar_time * minutes_to_hours * hourly_salary) * patients_per_month * months if enable_fax else 0
 cost_after_benefit = (benefit_price + post_lamar_time * minutes_to_hours * hourly_salary) * patients_per_month * months if enable_benefit else 0
 cost_after_auth = (auth_price + post_lamar_time * minutes_to_hours * hourly_salary) * patients_per_month * months if enable_auth else 0
-cost_after_total = cost_after_fax + cost_after_benefit + cost_after_auth
+cost_after_order_entry = order_entry_time_after * minutes_to_hours * patients_per_month * hourly_salary * months if enable_order_entry else 0
+
+cost_after_total = cost_after_fax + cost_after_benefit + cost_after_auth + cost_after_order_entry
 
 # Savings
 savings = cost_before_total - cost_after_total
@@ -57,27 +70,28 @@ col3.metric("ROI (%)", f"{roi_percent:.2f}%")
 
 # Time graph data
 months_range = list(range(1, months + 1))
-costs_before = [((fax_time * enable_fax + benefit_time * enable_benefit + auth_time * enable_auth) * minutes_to_hours * patients_per_month * hourly_salary) * m for m in months_range]
-costs_after = [((fax_price + post_lamar_time * minutes_to_hours * hourly_salary) * patients_per_month * enable_fax +
-                (benefit_price + post_lamar_time * minutes_to_hours * hourly_salary) * patients_per_month * enable_benefit +
-                (auth_price + post_lamar_time * minutes_to_hours * hourly_salary) * patients_per_month * enable_auth) * m for m in months_range]
+
+costs_before = [((fax_time * enable_fax +
+                  benefit_time * enable_benefit +
+                  auth_time * enable_auth +
+                  order_entry_time_before * enable_order_entry)
+                 * minutes_to_hours * patients_per_month * hourly_salary) * m for m in months_range]
+
+costs_after = [((fax_price * enable_fax +
+                 benefit_price * enable_benefit +
+                 auth_price * enable_auth) +
+                (post_lamar_time * (enable_fax + enable_benefit + enable_auth) +
+                 order_entry_time_after * enable_order_entry) * minutes_to_hours * hourly_salary)
+               * patients_per_month * m for m in months_range]
 
 # Create DataFrame for plotting
-data = pd.DataFrame({
-    'Month': months_range,
-    'Cost Before Lamar': costs_before,
-    'Cost After Lamar': costs_after
-})
-
-# Plot the data using Plotly for better styling and hover tooltips
-import plotly.express as px
-
 data_plot = pd.DataFrame({
     'Month': months_range,
     'Cost Before Lamar': costs_before,
     'Cost After Lamar': costs_after
 })
 
+# Plot cost comparison
 fig = px.line(
     data_plot,
     x='Month',
@@ -93,22 +107,14 @@ fig.update_layout(
 )
 st.plotly_chart(fig)
 
-st.write("Lamar Health offers automation solutions across three modules: Fax Processing, Benefit Check, and Prior Authorization. Customize the inputs on the left to see how much you can save.")
+st.write("Lamar Health offers automation solutions across four modules: Fax Processing, Benefit Check, Prior Authorization, and Order Entry Automation. Customize the inputs on the left to see how much you can save.")
 
 # Revenue Recapture
 st.header("Revenue Recapture from Policy Review")
-denial_rates = [x / 100 for x in range(1, 21)]  # 1% to 20%  # 0% to 20%
+denial_rates = [x / 100 for x in range(1, 21)]  # 1% to 20%
 patients_per_year = patients_per_month * 12
 revenue_per_patient = 80000  # Assumed chronic patient annual revenue
 revenue_recaptured = [(patients_per_year * revenue_per_patient * rate) / 100000 for rate in denial_rates]
-
-revenue_data = pd.DataFrame({
-    'Denial Rate Improvement (%)': [r * 100 for r in denial_rates],
-    'Revenue Recaptured ($)': revenue_recaptured
-})
-
-# Plot revenue recapture using Plotly for hover tooltips
-import plotly.express as px
 
 revenue_data_display = pd.DataFrame({
     'Denial Rate Improvement (%)': [r * 100 for r in denial_rates],
@@ -128,10 +134,10 @@ fig2.update_layout(
 )
 st.plotly_chart(fig2)
 
-# Explanation of revenue recapture calculation
 st.caption("""
 **Calculation Logic:**
 Revenue Recaptured = Number of Patients per Year x $80,000 (estimated chronic care revenue per patient) x Denial Rate Improvement (%)
 
 This assumes each patient contributes $80,000 annually and that improvement in denial rates results in direct revenue recovery.
 """)
+
