@@ -24,7 +24,8 @@ auth_price = st.sidebar.number_input("Lamar Prior Authorization Price ($)", valu
 
 # New Order Entry Automation
 enable_order_entry = st.sidebar.checkbox("Include Order Entry Automation", value=True)
-st.sidebar.caption("**Order Entry Formula:**\nBefore: 4 min × patients/month × hourly wage\nAfter: 0.5 min × patients/month × hourly wage")
+st.sidebar.caption("**Order Entry Formula:**\nBefore: 4 min × patients/month × hourly wage\nAfter: $order entry price + 0.5 min × patients/month × hourly wage")
+order_entry_price = st.sidebar.number_input("Lamar Order Entry Price ($)", value=1.50)
 
 # Constants
 months = years * 12
@@ -35,8 +36,6 @@ fax_time = 15
 benefit_time = 30
 auth_time = 40
 post_lamar_time = 1  # 1 minute of staff time per patient per module
-
-# Order entry times
 order_entry_time_before = 4
 order_entry_time_after = 0.5
 
@@ -52,7 +51,7 @@ cost_before_total = cost_before_fax + cost_before_benefit + cost_before_auth + c
 cost_after_fax = (fax_price + post_lamar_time * minutes_to_hours * hourly_salary) * patients_per_month * months if enable_fax else 0
 cost_after_benefit = (benefit_price + post_lamar_time * minutes_to_hours * hourly_salary) * patients_per_month * months if enable_benefit else 0
 cost_after_auth = (auth_price + post_lamar_time * minutes_to_hours * hourly_salary) * patients_per_month * months if enable_auth else 0
-cost_after_order_entry = order_entry_time_after * minutes_to_hours * patients_per_month * hourly_salary * months if enable_order_entry else 0
+cost_after_order_entry = (order_entry_price + order_entry_time_after * minutes_to_hours * hourly_salary) * patients_per_month * months if enable_order_entry else 0
 
 cost_after_total = cost_after_fax + cost_after_benefit + cost_after_auth + cost_after_order_entry
 
@@ -79,7 +78,8 @@ costs_before = [((fax_time * enable_fax +
 
 costs_after = [((fax_price * enable_fax +
                  benefit_price * enable_benefit +
-                 auth_price * enable_auth) +
+                 auth_price * enable_auth +
+                 order_entry_price * enable_order_entry) +
                 (post_lamar_time * (enable_fax + enable_benefit + enable_auth) +
                  order_entry_time_after * enable_order_entry) * minutes_to_hours * hourly_salary)
                * patients_per_month * m for m in months_range]
@@ -136,8 +136,7 @@ st.plotly_chart(fig2)
 
 st.caption("""
 **Calculation Logic:**
-Revenue Recaptured = Number of Patients per Year x $80,000 (estimated chronic care revenue per patient) x Denial Rate Improvement (%)
+Revenue Recaptured = Number of Patients per Year × $80,000 (estimated chronic care revenue per patient) × Denial Rate Improvement (%)
 
 This assumes each patient contributes $80,000 annually and that improvement in denial rates results in direct revenue recovery.
 """)
-
